@@ -191,11 +191,12 @@ class SleepTimerWidget(QWidget):
 
         action_type = str(self.actions_list.currentText()).lower()
         proc = Popen([self._platform_commands(action_type)], shell=True)
+        print proc
 
     def _platform_commands(self, command):
         commands = {
             'reboot': '/sbin/reboot',
-            'shutdown': '/sbin/shutdown',
+            'shutdown': '/sbin/shutdown -h now',
         }
 
         return commands[command]
