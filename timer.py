@@ -11,16 +11,16 @@ from PyQt4.QtCore import *
 class SleepTimerWidget(QWidget):
     def __init__(self, parent=None, *args, **kwargs):
         super(SleepTimerWidget, self).__init__(parent)
-        self.w_width = kwargs.get('w_width', 700)
-        self.w_height = kwargs.get('w_height', 500)
+        self.w_width = 400
+        self.w_height = 200
 
         w_center = self.get_window_center()
 
         # Main widget config
         self.setGeometry(w_center['pos_x'], w_center['pos_y'], self.w_width, self.w_height)
-        self.setMaximumSize(self.w_width, self.w_height)
-        self.setMinimumSize(self.w_width, self.w_height)
+        self.setFixedSize(self.w_width, self.w_height)
         self.setWindowTitle('Sleep Timer')
+        self.setStyleSheet("background: #D5D2D6;")
 
         # Timer init
         self.timer = QTimer()
@@ -38,18 +38,18 @@ class SleepTimerWidget(QWidget):
         self.hour_field.setValidator(hour_validator)
         self.hour_field.setFixedWidth(45)
 
-        hour_up = QPushButton()
+        hour_up = QPushButton('+')
         hour_up.setObjectName('Up')
         hour_up.setProperty('type', 'hour')
-        hour_up.setStyleSheet("background: red; outline: none;")
+        hour_up.setStyleSheet("background: #D5D2D6; outline: none;")
         hour_up.setFixedSize(20, 10)
         hour_up.clicked.connect(self.buttons_click)
         hour_up.setAutoRepeat(True)
 
-        hour_down = QPushButton()
+        hour_down = QPushButton('-')
         hour_down.setObjectName('Down')
         hour_down.setProperty('type', 'hour')
-        hour_down.setStyleSheet("background: yellow; outline: none;")
+        hour_down.setStyleSheet("background: #D5D2D6; outline: none;")
         hour_down.setFixedSize(20, 10)
         hour_down.clicked.connect(self.buttons_click)
         hour_down.setAutoRepeat(True)
@@ -75,18 +75,18 @@ class SleepTimerWidget(QWidget):
         self.minute_field.setValidator(minute_validator)
         self.minute_field.setFixedWidth(45)
 
-        minute_up = QPushButton()
+        minute_up = QPushButton('+')
         minute_up.setObjectName('Up')
         minute_up.setProperty('type', 'minute')
-        minute_up.setStyleSheet("background: red; outline: none;")
+        minute_up.setStyleSheet("background: #D5D2D6; outline: none;")
         minute_up.setFixedSize(20, 10)
         minute_up.clicked.connect(self.buttons_click)
         minute_up.setAutoRepeat(True)
 
-        minute_down = QPushButton()
+        minute_down = QPushButton('-')
         minute_down.setObjectName('Down')
         minute_down.setProperty('type', 'minute')
-        minute_down.setStyleSheet("background: yellow; outline: none;")
+        minute_down.setStyleSheet("background: #D5D2D6; outline: none;")
         minute_down.setFixedSize(20, 10)
         minute_down.clicked.connect(self.buttons_click)
         minute_down.setAutoRepeat(True)
@@ -110,6 +110,7 @@ class SleepTimerWidget(QWidget):
         actions_label.setStyleSheet("font-size: 18px; color: #333333;")
 
         self.actions_list = QComboBox()
+        # self.actions_list.setStyleSheet("outline: none;")
         self.actions_list.addItem("Reboot")
         self.actions_list.addItem("Shutdown")
 
@@ -120,9 +121,11 @@ class SleepTimerWidget(QWidget):
 
         # Control buttons init
         self.start_button = QPushButton('Start')
+        self.start_button.setStyleSheet("background: #D5D2D6; outline: none;")
         self.start_button.clicked.connect(self.start_button_action)
 
         self.stop_button = QPushButton('Cancel')
+        self.stop_button.setStyleSheet("background: #D5D2D6; outline: none;")
         self.stop_button.clicked.connect(self.stop_button_action)
 
         buttons_layout = QHBoxLayout()
@@ -188,27 +191,15 @@ class SleepTimerWidget(QWidget):
         print "Timer out. System shut down..."
 
         action_type = str(self.actions_list.currentText()).lower()
+        proc = Popen([self._platform_commands(action_type)], shell=True)
 
-        if 'win' in sys.platform:
-            platform = 'win'
-        elif 'linux' in sys.platform:
-            platform = 'linux'
-
-        proc = Popen([self._platform_commands(platform, action_type)], shell=True)
-
-    def _platform_commands(self, platform, command):
+    def _platform_commands(self, command):
         commands = {
-            'win': {
-                'reboot': '',
-                'shutdown': '',
-            },
-            'linux': {
-                'reboot': '/sbin/reboot',
-                'shutdown': '/sbin/shutdown',
-            },
+            'reboot': '/sbin/reboot',
+            'shutdown': '/sbin/shutdown',
         }
 
-        return commands[platform][command]
+        return commands[command]
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
@@ -226,7 +217,7 @@ class SleepTimerWidget(QWidget):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 
-    m = SleepTimerWidget(w_width=400, w_height=200)
+    m = SleepTimerWidget()
     m.show()
 
     sys.exit(app.exec_())
