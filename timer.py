@@ -110,7 +110,6 @@ class SleepTimerWidget(QWidget):
         actions_label.setStyleSheet("font-size: 18px; color: #333333;")
 
         self.actions_list = QComboBox()
-        # self.actions_list.setStyleSheet("outline: none;")
         self.actions_list.addItem("Reboot")
         self.actions_list.addItem("Shutdown")
 
